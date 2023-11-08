@@ -1,27 +1,38 @@
-const Property = require("../model/Property");
+const User = require("../model/User");
+const bycrypt = require("bcrypt");
 
-///////////  get all Listing ////////////////
-const postList = async (req, res, next) => {
-  const newList = new Property({
-    hostid: "123",
-    propertType: "room",
-    title: "malappuram house",
-    description: "small rent house",
-    location: "munduparamba",
-    address: "near governament college ",
-    pricePeNight: 1233,
-    availability: ["single room", "double room"],
-    maxGuest: 4,
-    bedrooms: 4,
-    bathrooms: 2,
-    amenities: ["play", "games"],
+const Login = async (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+
+  const salt = await bycrypt.genSalt(10);
+  const user = new User({
+    firstName,
+    lastName,
+    email,
+    password: await bycrypt.hash(password, salt),
   });
   try {
-    const savedList = await newList.save();
-    res.status(200).json(savedList);
+    const newUser = await user.save();
+    res.status(200).json(newUser);
   } catch (err) {
-    res.status(404).json(err);
+    res.status(400).json(err);
   }
 };
+const Sign = async (req, res) => {
+  try {
+    const { userName, password } = req.body;
+    console.log(userName);
+    console.log(password);
 
-module.exports = postList;
+    let user = await User.findOne({ email: userName });
+    if (!user) return res.status(400).send("invalid email or password");
+
+    const validPassword = await bycrypt.compare(password, user.password);
+    if (!validPassword)
+      return res.status(400).send("invalid email or password");
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(400).json(err);
+  }
+};
+module.exports = { Login, Sign };

@@ -1,6 +1,6 @@
 const router = require("express").Router();
-const getProperties = require("../controllers/ListController");
+const { geAlltList } = require("../controllers/ListController");
 
-router.get("/", getProperties);
+router.get("/", geAlltList);
 
 module.exports = router;
