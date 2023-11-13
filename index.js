@@ -7,6 +7,7 @@ const app = express();
 const userRout = require("./routers/users");
 const ListRout = require("./routers/List");
 const error = require("./middlewares/ErrorHandle");
+const { cloudinaryConfig } = require("./config/Couldinary");
 /////////// connecting to mongodb //////////
 mongoose
   .connect(process.env.MONGO_URL)
@@ -14,9 +15,12 @@ mongoose
   .catch((err) => console.log(err));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cors());
+app.use("*", cloudinaryConfig);
 app.use("/listings", ListRout);
 app.use("/user", userRout);
+
 app.use(error);
 
 ///////// listining ///////////////

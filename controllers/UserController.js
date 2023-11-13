@@ -17,7 +17,7 @@ const Login = async (req, res) => {
 
   const newUser = await user.save();
   const token = user.generateAuthToken();
-  res.header("X-auth-token", token).send(newUser);
+  res.header("X-auth-token", token).json({ ...newUser._doc, token });
 };
 
 ///////////// SIGN (✿◡‿◡) ////////////////
@@ -26,7 +26,7 @@ const Sign = async (req, res) => {
   const { userName, password } = req.body;
 
   const { error } = validateUser(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).json(error.details[0].message);
 
   let user = await User.findOne({ email: userName });
   if (!user) return res.status(400).send("invalid email or password");
@@ -35,7 +35,7 @@ const Sign = async (req, res) => {
   if (!validPassword) return res.status(400).send("invalid email or password");
 
   const token = user.generateAuthToken();
-  res.status(200).json(token);
+  res.status(200).send(token);
 };
 
 //////////// CURRENT USER .·´¯`(>▂<)´¯`·.   ///////////
