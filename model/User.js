@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
+const WhishList = require("./Whishlist");
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -31,9 +32,22 @@ const userSchema = new mongoose.Schema({
   },
   userType: {
     type: String,
+    enum: ["user", "host", "admin"],
+  },
+  whishList: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "WhishList",
+  },
+  reservation: {
+    type: Array,
+    ref: "Reservation",
+    required: function () {
+      return this.userType == "host";
+    },
   },
   socialType: {
     type: String,
+    enum: ["google"],
   },
 });
 userSchema.methods.generateAuthToken = function () {

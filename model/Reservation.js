@@ -2,35 +2,33 @@ const mongoose = require("mongoose");
 
 const reserveSchema = new mongoose.Schema({
   guestId: {
-    type: Number,
+    type: String,
     required: true,
   },
   listingId: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Property",
     required: true,
   },
   checkInDate: {
-    type: Date,
+    type: String,
     required: true,
   },
 
   checkoutDate: {
-    type: Date,
+    type: String,
     required: true,
   },
   totalPrice: {
     type: Number,
   },
-  status: {
-    type: String,
-    required: true,
-  },
+
   guestMessage: {
     type: String,
-    required: true,
+    // required: true,
   },
   bookingDate: {
-    type: Date,
+    type: String,
   },
 });
 

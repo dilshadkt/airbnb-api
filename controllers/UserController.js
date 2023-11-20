@@ -2,6 +2,7 @@ const { User, validate } = require("../model/User");
 const bycrypt = require("bcrypt");
 const Joi = require("joi");
 const _ = require("lodash");
+const { WhishList } = require("../model/Whishlist");
 
 //////////////  LOGIN (❁´◡`❁) ///////////////
 
@@ -14,10 +15,9 @@ const Login = async (req, res) => {
     _.pick(req.body, ["firstName", "lastName", "email", "password"])
   );
   user.password = await bycrypt.hash(user.password.toString(), salt);
-
   const newUser = await user.save();
   const token = user.generateAuthToken();
-  res.header("X-auth-token", token).json({ ...newUser._doc, token });
+  res.header("X-auth-token", token).json({ user: newUser, token });
 };
 
 ///////////// SIGN (✿◡‿◡) ////////////////
@@ -35,7 +35,12 @@ const Sign = async (req, res) => {
   if (!validPassword) return res.status(400).send("invalid email or password");
 
   const token = user.generateAuthToken();
-  res.status(200).send(token);
+  const whish = await WhishList.findOne({ user: user._id }).populate(
+    "property"
+  );
+  const propertyId = whish.property.map((item) => item._id.toString());
+
+  res.status(200).send({ token, user, propertyId });
 };
 
 //////////// CURRENT USER .·´¯`(>▂<)´¯`·.   ///////////
@@ -45,6 +50,11 @@ const CurrentUser = async (req, res) => {
   res.status(200).send(user);
 };
 
+/////////////// DETAILS OF ALL USER /////////
+const GetAllUser = async (req, res) => {
+  const users = await User.findOne();
+  res.send(users);
+};
 ///////// joi validation  /////////////
 
 function validateUser(user) {
@@ -54,4 +64,4 @@ function validateUser(user) {
   });
   return Schema.validate(user);
 }
-module.exports = { Login, Sign, CurrentUser };
+module.exports = { Login, Sign, CurrentUser, GetAllUser };

@@ -1,6 +1,7 @@
 const Property = require("../model/Property");
 const _ = require("lodash");
 const { uploader } = require("../config/Couldinary");
+const { User } = require("../model/User");
 
 //////// get all list of property /////////
 const geAlltList = async (req, res, next) => {
@@ -16,6 +17,7 @@ const geAlltList = async (req, res, next) => {
 
 ///////// POST A LIST (PROPERTY) ☆*: .｡. o(≧▽≦)o .｡.:*☆ ////////
 const postList = async (req, res, next) => {
+  console.log(req.query.userId);
   try {
     let Files = req.files;
     if (!Files)
@@ -42,13 +44,18 @@ const postList = async (req, res, next) => {
         "security",
       ])
     );
+    property.hostid = req.query.userId;
     property.images = imageResponses.map((item) => item.url);
 
+    const user = await User.findById(req.query.userId);
+
+    user.userType = "host";
+    await user.save();
     const NewProperty = await property.save();
     res.status(200).json(NewProperty);
   } catch (err) {
     res.status(500).json({
-      message: err.message,
+      messageyup: err.message,
     });
   }
 };
