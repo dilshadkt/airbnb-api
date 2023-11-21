@@ -56,4 +56,17 @@ const DeleteWhishList = async (req, res) => {
 
   res.send(whislist);
 };
-module.exports = { addwhishList, GetWhishList, DeleteWhishList };
+/////// GET ALL WISH LIST ////////////////////
+const GetAllWishlist = async (req, res) => {
+  const whishlist = await WhishList.find()
+    .populate("property")
+    .select({ property: 1 });
+  const result = whishlist.map((item) => item.property);
+  res.status(200).send(result.flat());
+};
+module.exports = {
+  addwhishList,
+  GetWhishList,
+  DeleteWhishList,
+  GetAllWishlist,
+};

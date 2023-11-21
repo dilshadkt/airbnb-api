@@ -52,7 +52,7 @@ const CurrentUser = async (req, res) => {
 
 /////////////// DETAILS OF ALL USER /////////
 const GetAllUser = async (req, res) => {
-  const users = await User.findOne();
+  const users = await User.find();
   res.send(users);
 };
 ///////// joi validation  /////////////
