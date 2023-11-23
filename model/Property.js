@@ -61,6 +61,9 @@ const PropertySchema = new mongoose.Schema({
     type: Number,
     // required: true,
   },
+  isVefied: {
+    type: Boolean,
+  },
 
   discount: {
     type: Number,

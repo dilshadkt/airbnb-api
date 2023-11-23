@@ -9,6 +9,7 @@ const ListRout = require("./routers/List");
 const AuthRout = require("./routers/auth");
 const AddWishList = require("./routers/Wishlist");
 const BookRout = require("./routers/bookRout");
+const adminRout = require("./routers/admin");
 const error = require("./middlewares/ErrorHandle");
 const passport = require("passport");
 const passportSetup = require("./passport");
@@ -50,6 +51,7 @@ app.use("/auth", AuthRout);
 app.use("/addWishList", AddWishList);
 app.use("/book", BookRout);
 app.use("/admin", userRout);
+app.use("/admine/property", adminRout);
 // app.use(error);
 
 ///////// listining ///////////////
