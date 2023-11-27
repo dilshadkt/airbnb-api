@@ -8,7 +8,8 @@ const geAlltList = async (req, res, next) => {
   try {
     const properties = req.query.id
       ? await Property.findById(req.query.id)
-      : await Property.find();
+      : await Property.find({ isVefied: true });
+
     res.status(200).json(properties);
   } catch (err) {
     next(err);
@@ -81,10 +82,34 @@ const AcceptProperty = async (req, res) => {
   await property.save();
   res.status(200).send(" is verified by admin");
 };
+
+/// DELETE A LIST  ✖️✖️✖️ /////////
+
+const DeletList = async (req, res) => {
+  await Property.findByIdAndDelete(req.params.propertyId);
+  const property = await Property.find({ hostid: req.query.userId });
+  if (property) return res.send(property);
+  else return res.send("successfully removed");
+};
+
+///// UPDATE A LIST /////////////
+
+const UpdateList = async (req, res) => {
+  const objkey = Object.keys(req.body).toString();
+  const value = Object.values(req.body).toString();
+  const property = await Property.findById(req.params.propertyId);
+  property[objkey] = value;
+  await property.save();
+
+  res.send(property);
+};
+
 module.exports = {
   geAlltList,
   postList,
   getNewProperty,
   AcceptProperty,
   getAllListUser,
+  DeletList,
+  UpdateList,
 };
