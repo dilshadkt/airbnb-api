@@ -11,4 +11,5 @@ router.post("/:userId", asyncMiddleware(addwhishList));
 router.get("/:userId", asyncMiddleware(GetWhishList));
 router.get("/", asyncMiddleware(GetAllWishlist));
 router.delete("/:userId", asyncMiddleware(DeleteWhishList));
+
 module.exports = router;

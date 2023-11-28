@@ -5,15 +5,11 @@ const { User } = require("../model/User");
 
 //////// get all list of property /////////
 const geAlltList = async (req, res, next) => {
-  try {
-    const properties = req.query.id
-      ? await Property.findById(req.query.id)
-      : await Property.find({ isVefied: true });
+  const properties = req.query.id
+    ? await Property.findById(req.query.id)
+    : await Property.find({ isVefied: true });
 
-    res.status(200).json(properties);
-  } catch (err) {
-    next(err);
-  }
+  res.status(200).json(properties);
 };
 
 //// GET ALL LIST OF USER //////////////////////
@@ -23,49 +19,41 @@ const getAllListUser = async (req, res) => {
 };
 
 ///////// POST A LIST (PROPERTY) ☆*: .｡. o(≧▽≦)o .｡.:*☆ ////////
-const postList = async (req, res, next) => {
-  console.log(req.query.userId);
-  try {
-    let Files = req.files;
-    if (!Files)
-      return res.status(400).json({ message: "No picture attached!" });
+const postList = async (req, res) => {
+  let Files = req.files;
+  if (!Files) return res.status(400).json({ message: "No picture attached!" });
 
-    let multiplePicturePromise = Files.map((picture) =>
-      uploader.upload(picture.path)
-    );
-    // await all the cloudinary upload functions in promise.all, exactly where the magic happens
-    let imageResponses = await Promise.all(multiplePicturePromise);
+  let multiplePicturePromise = Files.map((picture) =>
+    uploader.upload(picture.path)
+  );
+  // await all the cloudinary upload functions in promise.all, exactly where the magic happens
+  let imageResponses = await Promise.all(multiplePicturePromise);
 
-    const property = new Property(
-      _.pick(req.body, [
-        "houseType",
-        "propertyType",
-        "place",
-        "aboutPlace",
-        "propertyOffer",
-        "image",
-        "title",
-        "description",
-        "pricePeNight",
-        "discount",
-        "security",
-      ])
-    );
-    property.hostid = req.query.userId;
-    property.isVefied = false;
-    property.images = imageResponses.map((item) => item.url);
+  const property = new Property(
+    _.pick(req.body, [
+      "houseType",
+      "propertyType",
+      "place",
+      "aboutPlace",
+      "propertyOffer",
+      "image",
+      "title",
+      "description",
+      "pricePeNight",
+      "discount",
+      "security",
+    ])
+  );
+  property.hostid = req.query.userId;
+  property.isVefied = false;
+  property.images = imageResponses.map((item) => item.url);
 
-    const user = await User.findById(req.query.userId);
+  const user = await User.findById(req.query.userId);
 
-    user.userType = "host";
-    await user.save();
-    const NewProperty = await property.save();
-    res.status(200).json(NewProperty);
-  } catch (err) {
-    res.status(500).json({
-      messageyup: err.message,
-    });
-  }
+  user.userType = "host";
+  await user.save();
+  const NewProperty = await property.save();
+  res.status(200).json(NewProperty);
 };
 
 ///  GET NEW PROPERTY THAT'S NOT VERIFIED （づ￣3￣）づ╭❤️～ ////
@@ -95,13 +83,23 @@ const DeletList = async (req, res) => {
 ///// UPDATE A LIST /////////////
 
 const UpdateList = async (req, res) => {
+  let file = req.files;
+  const property = await Property.findById(req.params.propertyId);
   const objkey = Object.keys(req.body).toString();
   const value = Object.values(req.body).toString();
-  const property = await Property.findById(req.params.propertyId);
-  property[objkey] = value;
-  await property.save();
+  if (file) {
+    let multiplePicturePromise = file.map((pic) => uploader.upload(pic.path));
+    let imageResponses = await Promise.all(multiplePicturePromise);
+    const images = imageResponses.map((item) => item.url);
+    property.images = images;
+    await property.save();
+    res.send(property);
+  } else {
+    property[objkey] = value;
+    await property.save();
 
-  res.send(property);
+    res.send(property);
+  }
 };
 
 module.exports = {

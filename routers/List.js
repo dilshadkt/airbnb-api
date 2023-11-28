@@ -10,9 +10,18 @@ const {
   UpdateList,
 } = require("../controllers/ListController");
 
-router.patch("/:propertyId", asyncMiddleware(UpdateList));
-router.get("/", geAlltList);
-router.post("/become-a-host", upload.array("photos", 6), postList);
-router.get("/manageList/:userId", getAllListUser);
-router.delete("/:propertyId", DeletList);
+router.patch(
+  "/:propertyId",
+  upload.array("photos", 6),
+  asyncMiddleware(UpdateList)
+);
+router.get("/", asyncMiddleware(geAlltList));
+router.post(
+  "/become-a-host",
+  upload.array("photos", 6),
+  asyncMiddleware(postList)
+);
+router.get("/manageList/:userId", asyncMiddleware(getAllListUser));
+router.delete("/:propertyId", asyncMiddleware(DeletList));
+
 module.exports = router;

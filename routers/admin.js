@@ -5,7 +5,7 @@ const {
   AcceptProperty,
 } = require("../controllers/ListController");
 
-router.get("/newProperty", getNewProperty);
+router.get("/newProperty", asyncMiddleware(getNewProperty));
 router.patch("/newProperty/:propertyId", asyncMiddleware(AcceptProperty));
 
 module.exports = router;

@@ -3,6 +3,7 @@ const bycrypt = require("bcrypt");
 const Joi = require("joi");
 const _ = require("lodash");
 const { WhishList } = require("../model/Whishlist");
+const { uploader } = require("../config/Couldinary");
 
 //////////////  LOGIN (❁´◡`❁) ///////////////
 
@@ -55,6 +56,18 @@ const GetAllUser = async (req, res) => {
   const users = await User.find();
   res.send(users);
 };
+
+////// UPDATE USER 👨‍🔧👨‍🔧👨‍🔧 //////
+const UpdateUser = async (req, res) => {
+  const file = req.file;
+  if (!file) return res.status(400).json({ message: "no picture is provide" });
+  const image = await uploader.upload(file.path);
+  const user = await User.findById(req.params.userId);
+  if (!user) return res.status(400).send("no user found");
+  user.profilePicture = image.url;
+  await user.save();
+  res.status(200).send(image.url);
+};
 ///////// joi validation  /////////////
 
 function validateUser(user) {
@@ -64,4 +77,4 @@ function validateUser(user) {
   });
   return Schema.validate(user);
 }
-module.exports = { Login, Sign, CurrentUser, GetAllUser };
+module.exports = { Login, Sign, CurrentUser, GetAllUser, UpdateUser };

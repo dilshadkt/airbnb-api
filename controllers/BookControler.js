@@ -4,7 +4,6 @@ const _ = require("lodash");
 const { User } = require("../model/User");
 
 //////// RESERVE  🧾🧾🧾 ///////////////
-
 const postReserve = async (req, res) => {
   const reservation = new Reserve(
     _.pick(req.body, [
@@ -18,7 +17,6 @@ const postReserve = async (req, res) => {
   );
 
   const property = await Property.findById(req.body.listingId);
-
   const host = await User.findById(property.hostid);
 
   host.reservation.push(reservation._id);
