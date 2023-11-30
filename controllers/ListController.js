@@ -4,7 +4,7 @@ const { uploader } = require("../config/Couldinary");
 const { User } = require("../model/User");
 
 //////// get all list of property /////////
-const geAlltList = async (req, res, next) => {
+const geAlltList = async (req, res) => {
   const properties = req.query.id
     ? await Property.findById(req.query.id)
     : await Property.find({ isVefied: true });

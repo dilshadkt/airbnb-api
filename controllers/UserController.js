@@ -60,6 +60,7 @@ const GetAllUser = async (req, res) => {
 ////// UPDATE USER 👨‍🔧👨‍🔧👨‍🔧 //////
 const UpdateUser = async (req, res) => {
   const file = req.file;
+
   if (!file) return res.status(400).json({ message: "no picture is provide" });
   const image = await uploader.upload(file.path);
   const user = await User.findById(req.params.userId);
