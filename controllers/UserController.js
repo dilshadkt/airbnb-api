@@ -27,9 +27,11 @@ const Sign = async (req, res) => {
   const { userName, password } = req.body;
 
   const { error } = validateUser(req.body);
+
   if (error) return res.status(400).json(error.details[0].message);
 
   let user = await User.findOne({ email: userName });
+
   if (!user) return res.status(400).send("invalid email or password");
 
   const validPassword = await bycrypt.compare(password, user.password);
@@ -39,7 +41,9 @@ const Sign = async (req, res) => {
   const whish = await WhishList.findOne({ user: user._id }).populate(
     "property"
   );
-  const propertyId = whish.property.map((item) => item._id.toString());
+  const propertyId = whish
+    ? whish.property.map((item) => item._id.toString())
+    : [];
 
   res.status(200).send({ token, user, propertyId });
 };
