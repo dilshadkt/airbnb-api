@@ -5,7 +5,7 @@ const PropertySchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
-  propertType: {
+  propertyType: {
     type: String,
     // required: true,
   },

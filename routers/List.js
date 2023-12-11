@@ -8,6 +8,8 @@ const {
   getAllListUser,
   DeletList,
   UpdateList,
+  filteredList,
+  customeFilter,
 } = require("../controllers/ListController");
 
 router.patch(
@@ -21,6 +23,8 @@ router.post(
   upload.array("photos", 6),
   asyncMiddleware(postList)
 );
+router.get("/data", asyncMiddleware(filteredList));
+router.get("/filtered", asyncMiddleware(customeFilter));
 router.get("/manageList/:userId", asyncMiddleware(getAllListUser));
 router.delete("/:propertyId", asyncMiddleware(DeletList));
 

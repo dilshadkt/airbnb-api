@@ -2,6 +2,7 @@ const Property = require("../model/Property");
 const _ = require("lodash");
 const { uploader } = require("../config/Couldinary");
 const { User } = require("../model/User");
+const { any } = require("joi");
 
 //////// get all list of property /////////
 const geAlltList = async (req, res) => {
@@ -28,7 +29,7 @@ const postList = async (req, res) => {
   );
   // await all the cloudinary upload functions in promise.all, exactly where the magic happens
   let imageResponses = await Promise.all(multiplePicturePromise);
-
+  console.log(req.body.houseType);
   const property = new Property(
     _.pick(req.body, [
       "houseType",
@@ -102,6 +103,44 @@ const UpdateList = async (req, res) => {
   }
 };
 
+//// FILTERED LIST //////////////////////
+const filteredList = async (req, res) => {
+  const list = await Property.find({ propertyType: req.query.type });
+  if (list.length === 0) return res.status(203).send(false);
+  res.send(list);
+};
+
+////////// CUSTOME FILTERD ////////////////
+const customeFilter = async (req, res) => {
+  const query = [
+    {
+      isVefied: true,
+    },
+  ];
+  if (req.query.type) {
+    if (req.query.type === "Any Type") query;
+    else query.push({ houseType: req.query.type });
+  }
+  if (req.query.minRange) {
+    query.push({ pricePeNight: { $gt: Number(req.query.minRange) } });
+  }
+  if (req.query.bedroom) {
+    if (req.query.bedroom === "any") query;
+    if (req.query.bedroom === "8+")
+      query.push({ bedrooms: { $gt: Number(req.query.bedroom) } });
+    else query.push({ bedrooms: req.query.bedroom });
+  }
+  if (req.query.bathroom) {
+    if (req.query.bathroom === "any") query;
+    if (req.query.bathroom === "8+")
+      query.push({ bathrooms: { $gt: Number(req.query.bathroom) } });
+    else query.push({ bathrooms: req.query.bathroom });
+  }
+
+  const list = await Property.find({ $and: query });
+  if (list.length === 0) return res.send(false);
+  res.send(list);
+};
 module.exports = {
   geAlltList,
   postList,
@@ -110,4 +149,6 @@ module.exports = {
   getAllListUser,
   DeletList,
   UpdateList,
+  filteredList,
+  customeFilter,
 };
