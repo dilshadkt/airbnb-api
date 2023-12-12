@@ -6,14 +6,12 @@ dotenv.config();
 const app = express();
 const userRout = require("./routers/users");
 const ListRout = require("./routers/List");
-const AuthRout = require("./routers/auth");
 const AddWishList = require("./routers/Wishlist");
 const BookRout = require("./routers/bookRout");
 const adminRout = require("./routers/admin");
 const paymentRout = require("./routers/payment");
+const graphRouter = require("./routers/graphRoute");
 const error = require("./middlewares/ErrorHandle");
-const passport = require("passport");
-const passportSetup = require("./passport");
 const cookieSession = require("cookie-session");
 const session = require("express-session");
 const { cloudinaryConfig } = require("./config/Couldinary");
@@ -67,20 +65,18 @@ app.use(
     saveUninitialized: true,
   })
 );
-app.use(passport.initialize());
-app.use(passport.session());
+
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use("*", cloudinaryConfig);
 app.use("/listings", ListRout);
 app.use("/user", userRout);
-app.use("/auth", AuthRout);
 app.use("/addWishList", AddWishList);
 app.use("/book", BookRout);
 app.use("/admin", userRout);
 app.use("/admine/property", adminRout);
 app.use("/payment", paymentRout);
-// app.use(error);
+app.use("/data", graphRouter);
 
 ///////// listining ///////////////
 app.listen(process.env.PORT || 5000, () => {

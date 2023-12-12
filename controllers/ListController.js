@@ -54,6 +54,7 @@ const postList = async (req, res) => {
   user.userType = "host";
   await user.save();
   const NewProperty = await property.save();
+
   res.status(200).json(NewProperty);
 };
 
@@ -105,7 +106,10 @@ const UpdateList = async (req, res) => {
 
 //// FILTERED LIST //////////////////////
 const filteredList = async (req, res) => {
-  const list = await Property.find({ propertyType: req.query.type });
+  const list = await Property.find({
+    propertyType: req.query.type,
+    isVefied: true,
+  });
   if (list.length === 0) return res.status(203).send(false);
   res.send(list);
 };
@@ -126,17 +130,17 @@ const customeFilter = async (req, res) => {
   }
   if (req.query.bedroom) {
     if (req.query.bedroom === "any") query;
-    if (req.query.bedroom === "8+")
+    else if (req.query.bedroom === "8+")
       query.push({ bedrooms: { $gt: Number(req.query.bedroom) } });
     else query.push({ bedrooms: req.query.bedroom });
   }
   if (req.query.bathroom) {
     if (req.query.bathroom === "any") query;
-    if (req.query.bathroom === "8+")
+    else if (req.query.bathroom == "8")
       query.push({ bathrooms: { $gt: Number(req.query.bathroom) } });
     else query.push({ bathrooms: req.query.bathroom });
   }
-
+  console.log(query);
   const list = await Property.find({ $and: query });
   if (list.length === 0) return res.send(false);
   res.send(list);

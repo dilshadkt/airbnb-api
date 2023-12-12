@@ -48,6 +48,21 @@ const Sign = async (req, res) => {
   res.status(200).send({ token, user, propertyId });
 };
 
+/// GOOGLE SIGN   🚀🚀🚀🚀///////////////
+const googleSign = async (req, res) => {
+  const { given_name, picture, email } = req.body.data;
+  const user = await User.findOne({ email: email });
+  if (!user) return res.status(400).send("there is no user with this email");
+  const token = user.generateAuthToken();
+  const whish = await WhishList.findOne({ user: user._id }).populate(
+    "property"
+  );
+  const propertyId = whish
+    ? whish.property.map((item) => item._id.toString())
+    : [];
+  res.status(200).send({ token, user, propertyId });
+};
+
 //////////// CURRENT USER .·´¯`(>▂<)´¯`·.   ///////////
 
 const CurrentUser = async (req, res) => {
@@ -82,4 +97,12 @@ function validateUser(user) {
   });
   return Schema.validate(user);
 }
-module.exports = { Login, Sign, CurrentUser, GetAllUser, UpdateUser };
+
+module.exports = {
+  Login,
+  Sign,
+  CurrentUser,
+  GetAllUser,
+  UpdateUser,
+  googleSign,
+};

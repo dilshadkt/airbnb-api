@@ -5,6 +5,7 @@ const { WhishList } = require("../model/Whishlist");
 const addwhishList = async (req, res, next) => {
   let user = await User.findById(req.params.userId);
   const IsExist = await WhishList.findOne({ user: user._id });
+  console.log(IsExist);
   if (IsExist) {
     IsExist.property.push(req.query.propertyId);
     await IsExist.save();
@@ -18,8 +19,8 @@ const addwhishList = async (req, res, next) => {
     user.whishList = newWish._id;
     await user.save();
     await newWish.save();
+    res.send(newWish.property);
   }
-  res.send(newWish.property);
 };
 
 //////////// GET WHISH LIST  ///////////////////
@@ -35,6 +36,8 @@ const GetWhishList = async (req, res) => {
     propertyId: item._id,
     images: item.images,
   }));
+  console.log(user.length);
+  if (user.length === 0) return res.status(200).send(false);
 
   res.send(user);
 };

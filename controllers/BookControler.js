@@ -33,6 +33,7 @@ const GetAllReserve = async (req, res) => {
       populate: { path: "listingId" },
     })
     .select({ reservation: 1 });
+  if (user.reservation.length === 0) return res.status(200).send(false);
   res.send(user.reservation);
 };
 
