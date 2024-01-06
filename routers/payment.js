@@ -8,8 +8,8 @@ router.post("/orders", async (req, res) => {
   try {
     const { amount } = req.body;
     const instance = new RazorPay({
-      key_id: process.env.RAZORPAY_SECRET,
-      key_secret: process.env.RAZORPAY_KEY_ID,
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_SECRET,
     });
     const option = {
       amount: amount * 100,
@@ -35,7 +35,8 @@ router.post("/success", async (req, res) => {
     // Creating our own digest
     // The format should be like this:
     // digest = hmac_sha256(orderCreationId + "|" + razorpayPaymentId, secret);
-    const shasum = crypto.createHmac("sha256", "w2lBtgmeuDUfnJVp43UpcaiT");
+    const shasum = crypto.createHmac("sha256", "Y5jQNIS2yy7i7hdJvbasSyWS  ");
+    console.log(shasum);
 
     shasum.update(`${orderCreationId}|${razorpayPaymentId}`);
 

@@ -78,15 +78,22 @@ const GetAllUser = async (req, res) => {
 
 ////// UPDATE USER 👨‍🔧👨‍🔧👨‍🔧 //////
 const UpdateUser = async (req, res) => {
-  const file = req.file;
-
-  if (!file) return res.status(400).json({ message: "no picture is provide" });
-  const image = await uploader.upload(file.path);
-  const user = await User.findById(req.params.userId);
-  if (!user) return res.status(400).send("no user found");
-  user.profilePicture = image.url;
-  await user.save();
-  res.status(200).send(image.url);
+  if (req.file) {
+    const file = req.file;
+    if (!file)
+      return res.status(400).json({ message: "no picture is provide" });
+    const image = await uploader.upload(file.path);
+    const user = await User.findById(req.params.userId);
+    if (!user) return res.status(400).send("no user found");
+    user.profilePicture = image.url;
+    await user.save();
+    res.status(200).send(image.url);
+  } else {
+    const user = await User.findById(req.params.userId);
+    user[Object.keys(req.body)] = Number(Object.values(req.body).toString());
+    await user.save();
+    res.send(user);
+  }
 };
 ///////// joi validation  /////////////
 

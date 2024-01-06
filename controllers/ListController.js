@@ -6,11 +6,14 @@ const { any } = require("joi");
 
 //////// get all list of property /////////
 const geAlltList = async (req, res) => {
-  const properties = req.query.id
+  let properties = req.query.id
     ? await Property.findById(req.query.id)
     : await Property.find({ isVefied: true });
 
-  res.status(200).json(properties);
+  if (req.query.id) {
+    const user = await User.findOne({ _id: properties.hostid });
+    res.status(200).json({ ...properties._doc, hostName: user.firstName });
+  } else res.status(200).json(properties);
 };
 
 //// GET ALL LIST OF USER //////////////////////
@@ -29,9 +32,9 @@ const postList = async (req, res) => {
   );
   // await all the cloudinary upload functions in promise.all, exactly where the magic happens
   let imageResponses = await Promise.all(multiplePicturePromise);
-  console.log(req.body.houseType);
+  console.log(req.body);
   const property = new Property(
-    _.pick(req.body, [
+    _.pick(JSON.parse(req.body.property), [
       "houseType",
       "propertyType",
       "place",
@@ -54,11 +57,11 @@ const postList = async (req, res) => {
   user.userType = "host";
   await user.save();
   const NewProperty = await property.save();
-
   res.status(200).json(NewProperty);
 };
 
-///  GET NEW PROPERTY THAT'S NOT VERIFIED （づ￣3￣）づ╭❤️～ ////
+///  GET NEW PROPERTY THAT'S NOT VERIFIED （づ￣3￣）づ╭❤️～ //////
+
 const getNewProperty = async (req, res) => {
   const property = await Property.find({ isVefied: false });
   if (!property) return res.status(400).send("no new property ");

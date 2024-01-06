@@ -18,4 +18,5 @@ router.post("/googleAuth", asyncMiddleware(googleSign));
 router.post("/me", auth, asyncMiddleware(CurrentUser));
 router.get("/allUser", asyncMiddleware(GetAllUser));
 router.patch("/:userId", upload.single("photos"), asyncMiddleware(UpdateUser));
+
 module.exports = router;
