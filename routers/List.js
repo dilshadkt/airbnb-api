@@ -10,6 +10,7 @@ const {
   UpdateList,
   filteredList,
   customeFilter,
+  getOwnerDetails,
 } = require("../controllers/ListController");
 
 router.patch(
@@ -27,5 +28,6 @@ router.get("/data", asyncMiddleware(filteredList));
 router.get("/filtered", asyncMiddleware(customeFilter));
 router.get("/manageList/:userId", asyncMiddleware(getAllListUser));
 router.delete("/:propertyId", asyncMiddleware(DeletList));
+router.get("/user/:propertyId", asyncMiddleware(getOwnerDetails));
 
 module.exports = router;

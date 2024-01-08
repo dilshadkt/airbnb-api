@@ -17,11 +17,18 @@ const postReserve = async (req, res) => {
   );
 
   const property = await Property.findById(req.body.listingId);
-  const host = await User.findById(property.hostid);
+  property.availability.push({
+    guestId: reservation.guestId,
+    checkIn: reservation.checkInDate,
+    checkOut: reservation.checkoutDate,
+  });
 
+  const host = await User.findById(property.hostid);
   host.reservation.push(reservation._id);
   await host.save();
   await reservation.save();
+  await property.save();
+
   res.status(200).json("resrved succesfully");
 };
 

@@ -23,41 +23,41 @@ mongoose
   .then(() => console.log("connetion is good"))
   .catch((err) => console.log(err));
 
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
-});
+// const server = http.createServer(app);
+// const io = new Server(server, {
+//   cors: { origin: "http://localhost:3000", methods: ["GET", "POST"] },
+// });
 
 ////////////  CHAT APPLICATION  /////////////////
-io.on("connection", (socket) => {
-  console.log(`user connected ${socket.id}`);
-  socket.on("join-room", (data) => {
-    console.log(`user joined with id :${socket.id} room:${data}`);
-    socket.join(data);
-  });
-  socket.on("mes_send", (data) => {
-    console.log(data);
-    socket.to(data.room).emit("recieve_msg", data);
-  });
-  socket.on("disconnect", () => {
-    console.log("user disconnetd", socket.id);
-  });
-});
-server.listen(3001, () => console.log("sercer is running"));
+// io.on("connection", (socket) => {
+//   // console.log(`user connected ${socket.id}`);
+//   socket.on("join-room", (data) => {
+//     // console.log(`user joined with id :${socket.id} room:${data}`);
+//     socket.join(data);
+//   });
+//   socket.on("mes_send", (data) => {
+//     // console.log(data);
+//     socket.to(data.room).emit("recieve_msg", data);
+//   });
+//   socket.on("disconnect", () => {
+//     // console.log("user disconnetd", socket.id);
+//   });
+// });
+// server.listen(3001, () => console.log("sercer is running"));
 
 //////////////////////////////////////////////////////////////////
-app.use(
-  cookieSession({
-    name: "session",
-    keys: ["dil"],
-    maxAge: 24 * 60 * 60 * 100,
-  })
-);
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-  })
-);
+// app.use(
+//   cookieSession({
+//     name: "session",
+//     keys: ["dil"],
+//     maxAge: 24 * 60 * 60 * 100,
+//   })
+// );
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000",
+//   })
+// );
 app.use(
   session({
     secret: "secret",

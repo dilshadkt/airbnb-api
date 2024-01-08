@@ -32,7 +32,7 @@ const postList = async (req, res) => {
   );
   // await all the cloudinary upload functions in promise.all, exactly where the magic happens
   let imageResponses = await Promise.all(multiplePicturePromise);
-  console.log(req.body);
+
   const property = new Property(
     _.pick(JSON.parse(req.body.property), [
       "houseType",
@@ -143,10 +143,20 @@ const customeFilter = async (req, res) => {
       query.push({ bathrooms: { $gt: Number(req.query.bathroom) } });
     else query.push({ bathrooms: req.query.bathroom });
   }
-  console.log(query);
+
   const list = await Property.find({ $and: query });
   if (list.length === 0) return res.send(false);
   res.send(list);
+};
+
+/////////////  GET OWNER DETAILS ///////////////
+const getOwnerDetails = async (req, res) => {
+  const propertyId = req.params.propertyId;
+  const poperty = await Property.findById(propertyId);
+  const ownerId = poperty.hostid;
+  const owner = await User.findById(ownerId);
+  if (!owner) return res.status(403).send("there is no owner with this id");
+  res.status(200).send(_.pick(owner, ["firstName", "email", "phone"]));
 };
 module.exports = {
   geAlltList,
@@ -158,4 +168,5 @@ module.exports = {
   UpdateList,
   filteredList,
   customeFilter,
+  getOwnerDetails,
 };
